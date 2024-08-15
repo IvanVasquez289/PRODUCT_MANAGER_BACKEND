@@ -1,4 +1,5 @@
 import express, { Router } from 'express'
+import { ColorsAdapter } from '../config/colors-adapter';
 
 export class Server {
 
@@ -15,7 +16,8 @@ export class Server {
         this.app.use(this.routes);
 
         this.app.listen(this.port, () => {
-            console.log(`Server running on port ${this.port}`)
+            // console.log(`Server running on port ${this.port}`)
+            ColorsAdapter.magenta(`Server running on port ${this.port}`)
         })
      
     }
