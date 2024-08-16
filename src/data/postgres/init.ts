@@ -1,9 +1,12 @@
-import { Sequelize } from "sequelize"
-import { ColorsAdapter } from "../config/colors-adapter"
+import { Sequelize } from "sequelize-typescript"
+import { ColorsAdapter } from "../../config/colors-adapter"
 export class DatabaseConnection {
     static async connect(postgresUri: string) {
         try {
-            const db = new Sequelize(postgresUri)
+            const db = new Sequelize(postgresUri, {
+                models: [__dirname + '/models/**/*.ts'],
+            })
+            // console.log(__dirname + '/models/**/*.ts')
             await db.authenticate()
             db.sync()
             ColorsAdapter.cyan('Successfully connected to database')

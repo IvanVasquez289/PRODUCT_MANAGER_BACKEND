@@ -1,5 +1,5 @@
 import { envs } from "./config/envs"
-import { DatabaseConnection } from "./data/db"
+import { DatabaseConnection } from "./data/postgres"
 import { AppRoutes } from "./presentation/routes"
 import { Server } from "./presentation/server"
 
