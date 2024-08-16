@@ -1,14 +1,32 @@
 import { Request, Response } from "express";
+import { ProductService } from "../services/product-service";
+import { CustomError } from "../../domain/errors/custom.error";
 
 
 export class ProductsController{
+
+    constructor(
+        private readonly productService: ProductService
+    ) {}
+
+    private handleError = (error: CustomError, res: Response) => {
+        if(error instanceof CustomError) {
+            res.status(error.statusCode).json({ message: error.message })
+            return
+        }
+
+        res.status(500).json({ message: 'Internal server error' })
+    }
 
     public getProducts = (req: Request, res: Response) => {
         res.json({ message: "Obteniendo todos los productos" })
     }
 
     public createProduct = (req: Request, res: Response) => {
-        res.json({ message: "Creando un nuevo producto" })
+        // res.json({ message: "Creando un nuevo producto" })
+        this.productService.createProduct()
+            .then(() => res.json({ message: "Creando un nuevo producto edit" }))
+            .catch((error) => this.handleError(error, res))
     }
 
     public getProduct = (req: Request, res: Response) => {

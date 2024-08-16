@@ -6,7 +6,6 @@ export class DatabaseConnection {
             const db = new Sequelize(postgresUri, {
                 models: [__dirname + '/models/**/*.ts'],
             })
-            // console.log(__dirname + '/models/**/*.ts')
             await db.authenticate()
             db.sync()
             ColorsAdapter.cyan('Successfully connected to database')

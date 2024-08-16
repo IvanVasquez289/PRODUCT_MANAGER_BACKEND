@@ -1,12 +1,14 @@
 import { Router } from "express"
 import { ProductsController } from "./controller"
+import { ProductService } from "../services/product-service"
 
 
 export class ProductRoutes {
 
     static get routes(): Router {
         const router = Router()
-        const controller = new ProductsController()
+        const productService = new ProductService
+        const controller = new ProductsController(productService)
 
         //Definir las rutas
         router.get('/', controller.getProducts)
