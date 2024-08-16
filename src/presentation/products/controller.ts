@@ -24,8 +24,8 @@ export class ProductsController{
 
     public createProduct = (req: Request, res: Response) => {
         // res.json({ message: "Creando un nuevo producto" })
-        this.productService.createProduct()
-            .then(() => res.json({ message: "Creando un nuevo producto edit" }))
+        this.productService.createProduct(req)
+            .then((data) => res.json(data))
             .catch((error) => this.handleError(error, res))
     }
 
