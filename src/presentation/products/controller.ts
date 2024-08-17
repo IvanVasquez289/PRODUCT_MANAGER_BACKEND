@@ -11,8 +11,8 @@ export class ProductsController{
 
     private handleError = (error: CustomError, res: Response) => {
         if(error instanceof CustomError) {
-            res.status(error.statusCode).json({ message: error.message })
-            return
+            if (error.errors) return res.status(error.statusCode).json({ errors: error.errors })
+            return res.status(error.statusCode).json({ message: error.message })
         }
 
         res.status(500).json({ message: 'Internal server error' })
@@ -23,7 +23,6 @@ export class ProductsController{
     }
 
     public createProduct = (req: Request, res: Response) => {
-        // res.json({ message: "Creando un nuevo producto" })
         this.productService.createProduct(req)
             .then((data) => res.json(data))
             .catch((error) => this.handleError(error, res))

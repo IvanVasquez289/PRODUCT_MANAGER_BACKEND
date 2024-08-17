@@ -1,9 +1,11 @@
+import { ValidationError } from "express-validator"
 
 export class CustomError extends Error {
 
     constructor(
         message: string,
-        public readonly statusCode: number
+        public readonly statusCode: number,
+        public readonly errors?: ValidationError[]
     ) {
         super(message)
     }
@@ -21,5 +23,9 @@ export class CustomError extends Error {
 
     static internalServer(message: string) {
         return new CustomError(message, 500)
+    }
+
+    static BadRequestExpressValidator(errors: ValidationError[]) {
+        return new CustomError('Bad Request', 400, errors)
     }
 }
