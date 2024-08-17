@@ -8,23 +8,15 @@ export class ProductService {
     constructor() {}
 
     async createProduct(req: Request) {
-        
-        //Validaciones
-        await ExpressValidatorAdapter.validateString('name', req)
-        await ExpressValidatorAdapter.validateNumber('price', req)
-        let errors = ExpressValidatorAdapter.Result(req)
-        let errorsArray = errors.array()
+        try {
+            const product = await Product.create(req.body)
 
-        if(!errors.isEmpty()){
-            throw CustomError.BadRequestExpressValidator(errorsArray)
+            return {
+                data: product
+            }
+        } catch (error) {
+            throw CustomError.internalServer('Error al crear el producto')
         }
 
-
-        const product = await Product.create(req.body)
-    
-
-        return {
-            data: product
-        }
     }
 }

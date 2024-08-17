@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { ProductsController } from "./controller"
 import { ProductService } from "../services/product-service"
+import { FieldValidationMiddleware } from "../middlewares/field-validation.middleware"
 
 
 export class ProductRoutes {
@@ -12,7 +13,7 @@ export class ProductRoutes {
 
         //Definir las rutas
         router.get('/', controller.getProducts)
-        router.post('/', controller.createProduct)
+        router.post('/', [FieldValidationMiddleware.ValidateField] ,controller.createProduct)
         router.get('/:id', controller.getProduct)
         router.put('/:id', controller.updateProduct)
         router.delete('/:id', controller.deleteProduct)
