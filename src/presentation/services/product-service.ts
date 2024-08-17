@@ -1,8 +1,6 @@
 import { Request } from "express";
 import Product from "../../data/postgres/models/product.model";
-import { ExpressValidatorAdapter } from "../../config/express-validator-adapter";
 import { CustomError } from "../../domain/errors/custom.error";
-import { Result, ValidationError } from "express-validator";
 
 export class ProductService {
     constructor() {}
@@ -18,5 +16,20 @@ export class ProductService {
             throw CustomError.internalServer('Error al crear el producto')
         }
 
+    }
+
+    async getProducts() {
+        try {
+            const products = await Product.findAll({
+                order: [['price', 'DESC']],
+                attributes: {exclude: ['createdAt', 'updatedAt']}
+            })
+
+            return {
+                data: products
+            }
+        } catch (error) {
+            throw CustomError.internalServer(`${error}`)
+        }
     }
 }

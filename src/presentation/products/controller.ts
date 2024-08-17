@@ -19,7 +19,9 @@ export class ProductsController{
     }
 
     public getProducts = (req: Request, res: Response) => {
-        res.json({ message: "Obteniendo todos los productos" })
+        this.productService.getProducts()
+            .then((data) => res.json(data))
+            .catch((error) => this.handleError(error, res))
     }
 
     public createProduct = (req: Request, res: Response) => {
