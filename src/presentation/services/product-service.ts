@@ -79,4 +79,18 @@ export class ProductService {
     }
   }
 
+  async deleteProduct(req: Request) {
+    const { id } = req.params;
+    const product = await Product.findByPk(id);
+    if (!product) throw CustomError.notFound("El producto no existe");
+    try {
+      await product.destroy();
+      return {
+        data: product,
+      }
+    } catch (error) {
+      throw CustomError.internalServer(`${error}`);
+    }
+  }
+
 }

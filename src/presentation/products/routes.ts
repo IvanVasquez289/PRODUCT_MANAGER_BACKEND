@@ -49,7 +49,13 @@ export class ProductRoutes {
             ],
             controller.updateAvailability
         )
-        router.delete('/:id', controller.deleteProduct)
+        router.delete('/:id',
+            [
+                ExpressValidatorAdapter.validateParam(),
+                FieldValidationMiddleware.ValidateErrors
+            ],
+            controller.deleteProduct
+        )
 
         return router
     }

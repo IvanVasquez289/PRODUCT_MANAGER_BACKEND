@@ -49,6 +49,8 @@ export class ProductsController{
     }
 
     public deleteProduct = (req: Request, res: Response) => {
-        res.json({ message: "Eliminando un producto" })
+        this.productService.deleteProduct(req)
+            .then((data) => res.json(data))
+            .catch((error) => this.handleError(error, res))
     }
 }
