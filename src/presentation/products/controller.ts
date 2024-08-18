@@ -15,7 +15,7 @@ export class ProductsController{
             return res.status(error.statusCode).json({ message: error.message })
         }
 
-        res.status(500).json({ message: 'Internal server error' })
+        return res.status(500).json({ message: 'Internal server error' })
     }
 
     public getProducts = (req: Request, res: Response) => {
@@ -30,8 +30,10 @@ export class ProductsController{
             .catch((error) => this.handleError(error, res))
     }
 
-    public getProduct = (req: Request, res: Response) => {
-        res.json({ message: "Obteniendo un producto" })
+    public getProductById = (req: Request, res: Response) => {
+        this.productService.getProductById(req)
+            .then((data) => res.json(data))
+            .catch((error) => this.handleError(error, res))
     }
 
     public updateProduct = (req: Request, res: Response) => {

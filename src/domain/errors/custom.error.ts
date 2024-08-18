@@ -13,6 +13,10 @@ export class CustomError extends Error {
     static badRequest(message: string) {
         return new CustomError(message, 400)
     }
+
+    static notFound(message: string) {
+        return new CustomError(message, 404)
+    }
     static unathorized(message: string) {
         return new CustomError(message, 401)
     }

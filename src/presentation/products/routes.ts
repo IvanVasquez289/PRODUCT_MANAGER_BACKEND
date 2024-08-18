@@ -2,6 +2,8 @@ import { Router } from "express"
 import { ProductsController } from "./controller"
 import { ProductService } from "../services/product-service"
 import { FieldValidationMiddleware } from "../middlewares/field-validation.middleware"
+import { param } from "express-validator"
+import { ExpressValidatorAdapter } from "../../config/express-validator-adapter"
 
 
 export class ProductRoutes {
@@ -13,8 +15,23 @@ export class ProductRoutes {
 
         //Definir las rutas
         router.get('/', controller.getProducts)
-        router.post('/', [FieldValidationMiddleware.ValidateField] ,controller.createProduct)
-        router.get('/:id', controller.getProduct)
+        
+        router.post('/', 
+            [
+                ExpressValidatorAdapter.validateString('name'),
+                ExpressValidatorAdapter.validateNumber('price'),
+                FieldValidationMiddleware.ValidateErrors
+            ],
+            controller.createProduct
+        )
+
+        router.get('/:id', 
+            [
+                ExpressValidatorAdapter.validateParam(),
+                FieldValidationMiddleware.ValidateErrors
+            ],
+            controller.getProductById
+        )
         router.put('/:id', controller.updateProduct)
         router.delete('/:id', controller.deleteProduct)
 

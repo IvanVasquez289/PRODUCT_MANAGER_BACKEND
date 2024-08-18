@@ -1,18 +1,20 @@
 import { Request } from "express";
-import { check, validationResult } from "express-validator";
+import { body, check, param, validationResult } from "express-validator";
 
 export class ExpressValidatorAdapter {
 
-    static validateString = async(field: string,  req: Request) => {
-        await check(field).notEmpty().withMessage(`El campo ${field} no puede estar vacio`).run(req)
+    static validateString = (field: string) => {
+        return body(field).notEmpty().withMessage(`El campo ${field} no puede estar vacio`)
     } 
 
-    static validateNumber = async(field: string, req: Request) => {
-        await check(field)
+    static validateNumber = (field: string) => {
+        return body(field)
             .isNumeric().withMessage(`El campo ${field} debe ser un numero`)
             .notEmpty().withMessage(`El campo ${field} no puede estar vacio`)
             .custom((value) => value > 0).withMessage(`El campo ${field} debe ser mayor a 0`)
-            .run(req)
+    }
+    static validateParam = () => {
+        return param('id').isInt().withMessage('ID no valido')
     }
 
     static Result = (req: Request) => {
