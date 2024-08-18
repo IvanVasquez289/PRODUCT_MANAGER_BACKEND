@@ -46,4 +46,37 @@ export class ProductService {
       throw CustomError.internalServer(`${error}`);
     }
   }
+
+  async updateProduct(req: Request) {
+    const { id } = req.params;
+    const product = await Product.findByPk(id);
+    if (!product) throw CustomError.notFound("El producto no existe");
+
+    try {
+      await product.update(req.body);
+      await product.save();
+      return {
+        data: product,
+      }
+    } catch (error) {
+      throw CustomError.internalServer(`${error}`);
+    }
+  }
+
+  async updateAvailability(req: Request) {
+    const { id } = req.params;
+    const product = await Product.findByPk(id);
+    if (!product) throw CustomError.notFound("El producto no existe");
+    console.log(req.body.availability)
+    try {
+      product.availability = !product.availability
+      await product.save();
+      return {
+        data: product,
+      }
+    } catch (error) {
+      throw CustomError.internalServer(`${error}`);
+    }
+  }
+
 }

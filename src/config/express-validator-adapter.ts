@@ -13,6 +13,10 @@ export class ExpressValidatorAdapter {
             .notEmpty().withMessage(`El campo ${field} no puede estar vacio`)
             .custom((value) => value > 0).withMessage(`El campo ${field} debe ser mayor a 0`)
     }
+    static validateBoolean = (field: string) => {
+        return body(field)
+            .isBoolean().withMessage(`El campo ${field} debe ser un boolean`)
+    }
     static validateParam = () => {
         return param('id').isInt().withMessage('ID no valido')
     }

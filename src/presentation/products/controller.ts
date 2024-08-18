@@ -37,7 +37,15 @@ export class ProductsController{
     }
 
     public updateProduct = (req: Request, res: Response) => {
-        res.json({ message: "Actualizando un producto" })
+        this.productService.updateProduct(req)
+            .then((data) => res.json(data))
+            .catch((error) => this.handleError(error, res))
+    }
+
+    public updateAvailability = (req: Request, res: Response) => {
+        this.productService.updateAvailability(req)
+            .then((data) => res.json(data))
+            .catch((error) => this.handleError(error, res))
     }
 
     public deleteProduct = (req: Request, res: Response) => {

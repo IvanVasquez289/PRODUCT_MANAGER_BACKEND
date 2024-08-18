@@ -32,7 +32,23 @@ export class ProductRoutes {
             ],
             controller.getProductById
         )
-        router.put('/:id', controller.updateProduct)
+        router.put('/:id',
+            [
+                ExpressValidatorAdapter.validateParam(),
+                ExpressValidatorAdapter.validateString('name'),
+                ExpressValidatorAdapter.validateNumber('price'),
+                ExpressValidatorAdapter.validateBoolean('availability'),
+                FieldValidationMiddleware.ValidateErrors
+            ],
+            controller.updateProduct
+        )
+        router.patch('/:id',
+            [
+                ExpressValidatorAdapter.validateParam(),
+                FieldValidationMiddleware.ValidateErrors
+            ],
+            controller.updateAvailability
+        )
         router.delete('/:id', controller.deleteProduct)
 
         return router
