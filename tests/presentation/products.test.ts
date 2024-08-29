@@ -2,8 +2,15 @@ import request from 'supertest'
 import { testServer } from "../test-server"
 import { DatabaseConnection } from '../../src/data/postgres/init';
 import { envs } from "../../src/config/envs";
+import Product from '../../src/data/postgres/models/product.model';
+import { Model } from 'sequelize-typescript';
 
 const dbConnection = new DatabaseConnection(envs.POSTGRES_URI)
+
+
+beforeEach( () => {
+    jest.clearAllMocks()
+});
 
 beforeAll(async() => {
     await testServer.start()
@@ -98,6 +105,24 @@ describe('post /api/products', () => {
         expect(res.status).not.toBe(404)
         expect(res.status).not.toBe(200)
 
+    })
+
+    //* Como evaluar el catch
+    test('should return internal server error', async() => {
+
+       const createMock = jest.spyOn(Product, 'create').mockRejectedValue(new Error('Error inesperado'))
+
+       const res = await request(testServer.app)
+            .post('/api/products')
+            .send(product1)
+            .expect(500)
+        
+
+        expect(res.status).toBe(500)
+        expect(res.body).toEqual({
+            message: "Error al crear el producto"
+        })
+        createMock.mockRestore()
     })
 })
 
@@ -211,7 +236,7 @@ describe('put /api/products/:id', () => {
             .send({
                 name: "Terreneitor",
                 price: 3500,
-                availability: false
+                availability: true
             })
 
         expect(res.status).toBe(200)
@@ -219,7 +244,7 @@ describe('put /api/products/:id', () => {
             data: expect.objectContaining({
                 name: "Terreneitor",
                 price: 3500,
-                availability: false
+                availability: true
             })
         })
         expect(res.body).toHaveProperty('data')
@@ -227,5 +252,101 @@ describe('put /api/products/:id', () => {
         expect(res.status).not.toBe(404)
         expect(res.body).not.toHaveProperty('errors')
 
+    })
+})
+
+describe('patch /api/products/:id', () => {
+
+    test('should check a valid ID in the URL', async() => {
+        const res = await request(testServer.app)
+            .patch('/api/products/novalido')
+            .send(product1)
+            .expect(400)
+
+        expect(res.status).toBe(400)
+        expect(res.body).toHaveProperty('errors')
+        expect(res.body.errors).toBeInstanceOf(Array)
+        expect(res.body.errors).toHaveLength(1)
+        expect(res.body.errors[0].msg).toBe('ID no valido')
+        expect(res.status).not.toBe(404)
+    })
+
+    test('should return 404 if product not found', async() => {
+        const res = await request(testServer.app)
+            .patch('/api/products/100')
+            .send(product1)
+            .expect(404)
+
+        expect(res.status).toBe(404)
+        expect(res.body).toEqual({
+            message: "El producto no existe"
+        })
+        expect(res.status).not.toBe(200)
+        expect(res.body).not.toHaveProperty('data')
+    })
+
+    test('should update the product availability', async() => {
+
+        const res = await request(testServer.app)
+            .patch('/api/products/1')
+        
+        
+        expect(res.status).toBe(200)
+        expect(res.body.data.availability).toBe(false)
+        expect(res.body).toHaveProperty('data')
+
+        expect(res.status).not.toBe(404)
+        expect(res.body).not.toHaveProperty('errors')
+    })
+})
+
+describe('delete /api/products/:id', () => {
+    test('should check a valid ID in the URL', async() => {
+        const res = await request(testServer.app)
+            .delete('/api/products/novalido')
+            .expect(400)
+
+        expect(res.status).toBe(400)
+        expect(res.body).toHaveProperty('errors')
+        expect(res.body.errors).toBeInstanceOf(Array)
+        expect(res.body.errors).toHaveLength(1)
+        expect(res.body.errors[0].msg).toBe('ID no valido')
+        expect(res.status).not.toBe(404)
+        expect(res.status).not.toBe(200)
+    })
+
+    test('should return 404 if product not found', async() => {
+        const res = await request(testServer.app)
+            .delete('/api/products/100')
+            .expect(404)
+
+        expect(res.status).toBe(404)
+        expect(res.body).toEqual({
+            message: "El producto no existe"
+        })
+        expect(res.status).not.toBe(200)
+        expect(res.body).not.toHaveProperty('data')
+    })
+
+    test('should delete a product', async() => {
+
+        const res = await request(testServer.app)
+            .delete('/api/products/1')
+            .expect(200)
+
+        expect(res.status).toBe(200)
+        expect(res.body).toEqual({
+            data: expect.objectContaining({
+                id: expect.any(Number),
+                name: expect.any(String),
+                price: expect.any(Number),
+                availability: expect.any(Boolean),
+                createdAt:  expect.any(String),
+                updatedAt:  expect.any(String),
+            })
+        })
+
+        expect(res.status).not.toBe(404)
+        expect(res.body).not.toHaveProperty('errors')
     })
 })

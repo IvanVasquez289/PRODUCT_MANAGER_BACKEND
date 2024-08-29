@@ -67,7 +67,6 @@ export class ProductService {
     const { id } = req.params;
     const product = await Product.findByPk(id);
     if (!product) throw CustomError.notFound("El producto no existe");
-    console.log(req.body.availability)
     try {
       product.availability = !product.availability
       await product.save();
