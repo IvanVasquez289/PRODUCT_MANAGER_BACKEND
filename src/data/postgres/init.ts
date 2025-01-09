@@ -8,7 +8,7 @@ export class DatabaseConnection {
     async connect() {
         try {
             this.db = new Sequelize(this.postgresUri, {
-                models: [__dirname + '/models/**/*.ts'],
+                models: [__dirname + '/models/**/*'],
                 logging: false
             })
             await this.db.authenticate()
